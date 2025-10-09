@@ -6,7 +6,7 @@ class Config
     public string $latitude = '37.385272';
     public string $longitude = '55.584227';
     public string $location = 'moscow';
-    
+
     public string $tgApiKey = '<API key>';
     public string $tgChatId = '<chat id>';
 }
