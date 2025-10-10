@@ -6,6 +6,8 @@ namespace Classes\Harvester;
 
 use Classes\Dto\Day;
 use Classes\Dto\Location;
+use DateMalformedStringException;
+use DateTimeImmutable;
 use Interfaces\Harvester;
 use Interfaces\HttpClient;
 use JsonException;
@@ -32,6 +34,7 @@ final class OpenMeteoHarvester implements Harvester
     /**
      * @return Day[]
      * @throws JsonException
+     * @throws DateMalformedStringException
      */
     public function getTemperatureData(): array
     {
@@ -50,7 +53,7 @@ final class OpenMeteoHarvester implements Harvester
         $days = [];
         foreach ($rawData->daily->time as $index => $day) {
             $days[] = new Day(
-                date('d.m.Y', strtotime($day)),
+                new DateTimeImmutable($day),
                 (float)$rawData->daily->temperature_2m_min[$index],
                 sprintf(
                     self::ACCUWEATHER_LINK,

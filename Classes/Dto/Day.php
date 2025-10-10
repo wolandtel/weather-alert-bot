@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace Classes\Dto;
 
+use DateTimeImmutable;
+
 final class Day
 {
     public function __construct(
-        private string $date = '',
+        private ?DateTimeImmutable $date = null,
         private ?float $temperature = null,
-        private string $link  = ''
+        private string $link  = '',
+        private string $dayOfWeek = '',
     ) {
     }
 
-    public function setDate(string $date): self
+    public function setDate(DateTimeImmutable $date): self
     {
         $this->date = $date;
         return $this;
     }
 
-    public function getDate(): string
+    public function getDate(): ?DateTimeImmutable
     {
         return $this->date;
     }
@@ -45,5 +48,16 @@ final class Day
     public function getLink(): string
     {
         return $this->link;
+    }
+
+    public function setDayOfWeek(string $dayOfWeek): self
+    {
+        $this->dayOfWeek = $dayOfWeek;
+        return $this;
+    }
+
+    public function getDayOfWeek(): string
+    {
+        return $this->dayOfWeek;
     }
 }

@@ -42,12 +42,17 @@ final class ThresholdAlerter implements Alerter
     {
         $messages = [];
         foreach ($this->harvester->getTemperatureData() as $day) {
+            $date = $this->localeFormatter->date($day->getDate());
+            if (!empty($day->getDayOfWeek())) {
+                $date = "{$day->getDayOfWeek()}, $date";
+            }
+
             if ($day->getTemperature() < $this->threshold) {
                 $messages[] = sprintf(
                     'Минимальная температура воздуха на %s: %s°C.',
                     !empty($day->getLink())
-                        ? $this->richtext->getLink($day->getDate(), $day->getLink())
-                        : $day->getDate(),
+                        ? $this->richtext->getLink($date, $day->getLink())
+                        : $date,
                     $this->localeFormatter->number($day->getTemperature()),
                 );
             }

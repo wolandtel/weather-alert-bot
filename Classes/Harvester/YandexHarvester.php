@@ -6,6 +6,9 @@ namespace Classes\Harvester;
 
 use Classes\Dto\Day;
 use Classes\Dto\Location;
+use DateInterval;
+use DateMalformedStringException;
+use DateTimeImmutable;
 use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
@@ -32,7 +35,10 @@ final class YandexHarvester implements Harvester
         return $this;
     }
 
-    /** @return Day[] */
+    /**
+     * @return Day[]
+     * @throws DateMalformedStringException
+     */
     public function getTemperatureData(): array
     {
         return $this->parseHtmlPage($this->getHtmlPage());
@@ -48,7 +54,10 @@ final class YandexHarvester implements Harvester
         ));
     }
 
-    /** @return Day[] */
+    /**
+     * @return Day[]
+     * @throws DateMalformedStringException
+     */
     private function parseHtmlPage(string $html): array
     {
         $doc = new DOMDocument();
@@ -67,6 +76,7 @@ final class YandexHarvester implements Harvester
 
         $days = [];
         $day = null;
+        $firstDayOfMonth = null;
         foreach ($nodes as $index => $node)
         {
             if ($index % 3 === 0) {
@@ -75,12 +85,23 @@ final class YandexHarvester implements Harvester
                 }
                 $day = new Day();
                 if ($node->nodeName === 'a') {
-                    $date = strtr(
-                        preg_replace('/(\d+)/', ', $1', $node->textContent),
-                        ['Сегодня' => ', ' . date('d')],
+                    $dayOfForecast = strtr(
+                        preg_replace('/(\d+)/', ',$1', $node->textContent),
+                        ['Сегодня' => ',' . date('d')],
                     );
-                    $day->setDate($date . date('.m.Y'));
-                    $day->setLink(self::BASE_URL . $node->getAttribute('href'));
+                    [$dayOfWeek, $dayOfMonth] = explode(',', $dayOfForecast);
+                    if ($firstDayOfMonth === null) {
+                        $firstDayOfMonth = $dayOfMonth;
+                    }
+                    $date = new DateTimeImmutable(date("Y-m-$dayOfMonth"));
+
+                    // Если дни стали меньше, значит, мы перевалили за границу месяца
+                    if ($dayOfMonth < $firstDayOfMonth) {
+                        $date = $date->add(DateInterval::createFromDateString('1 month'));
+                    }
+                    $day->setDate($date)
+                        ->setDayOfWeek($dayOfWeek)
+                        ->setLink(self::BASE_URL . $node->getAttribute('href'));
                 }
             } elseif ($index % 3 === 2) {
                 $day->setTemperature((float)preg_replace(
