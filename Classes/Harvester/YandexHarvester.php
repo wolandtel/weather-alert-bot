@@ -84,7 +84,7 @@ final class YandexHarvester implements Harvester
                 }
             } elseif ($index % 3 === 2) {
                 $day->setTemperature((float)preg_replace(
-                    '/[^0-9.]/',
+                    '/[^0-9.-]/',
                     '',
                     $node->textContent
                 ));
