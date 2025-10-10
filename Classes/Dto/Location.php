@@ -7,6 +7,7 @@ namespace Classes\Dto;
 final class Location
 {
     private string $timezone = '';
+    private string $id = '';
 
     public function __construct(
         private readonly string $latitude,
@@ -39,5 +40,16 @@ final class Location
     public function getTimezone(): string
     {
         return $this->timezone;
+    }
+
+    public function setId(string $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
     }
 }

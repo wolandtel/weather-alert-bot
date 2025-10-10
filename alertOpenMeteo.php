@@ -3,7 +3,7 @@
 use Classes\Alterter\ThresholdAlerter;
 use Classes\Dto\Location;
 use Classes\Formatter\RuLocaleFormatter;
-use Classes\Harvester\YandexHarvester;
+use Classes\Harvester\OpenMeteoHarvester;
 use Classes\HttpClient\CurlHttpClient;
 use Classes\Richtext\MarkdownRichtext;
 use Classes\Sender\TelegramSender;
@@ -16,12 +16,16 @@ spl_autoload_register(static function (string $class) {
 $config = require 'Config.php';
 
 (new ThresholdAlerter(
-    (new YandexHarvester(new CurlHttpClient()))
-        ->setLocation(new Location(
-            $config->latitude,
-            $config->longitude,
-            $config->locationName,
-        )),
+    (new OpenMeteoHarvester(new CurlHttpClient()))
+        ->setLocation(
+            (new Location(
+                $config->latitude,
+                $config->longitude,
+                $config->locationName,
+            ))
+                ->setId($config->locationId)
+                ->setTimezone($config->timezone),
+        ),
     new MarkdownRichtext(),
     new RuLocaleFormatter(),
     (new TelegramSender(new CurlHttpClient()))
