@@ -10,7 +10,7 @@ use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
 use Interfaces\Harvester;
-use Interfaces\Retriever;
+use Interfaces\HttpClient;
 use RuntimeException;
 
 final class YandexHarvester implements Harvester
@@ -22,7 +22,7 @@ final class YandexHarvester implements Harvester
             . "//*[self::a or self::span[contains(@class, 'AppShortForecastDay_temperature__DV3oM')]]";
     private ?Location $location = null;
 
-    public function __construct(private readonly Retriever $retriever)
+    public function __construct(private readonly HttpClient $httpClient)
     {
     }
 
@@ -40,7 +40,7 @@ final class YandexHarvester implements Harvester
 
     private function getHtmlPage(): string
     {
-        return $this->retriever->get(sprintf(
+        return $this->httpClient->get(sprintf(
             self::URL,
             $this->location->getName(),
             $this->location->getLatitude(),
@@ -56,12 +56,12 @@ final class YandexHarvester implements Harvester
         $doc->loadHTML($html);
         libxml_clear_errors();
 
-        // 3. XPath-запрос
+        // XPath-запрос
         $xpath = new DOMXPath($doc);
 
         $nodes = $xpath->query(self::DAYS_XPATH);
 
-        if (!($nodes instanceof DOMNodeList)) {
+        if (!($nodes instanceof DOMNodeList) || $nodes->length === 0) {
             throw new RuntimeException('Error obtaining temperature data.');
         }
 

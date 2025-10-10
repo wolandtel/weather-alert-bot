@@ -2,9 +2,10 @@
 
 use Classes\Alterter\ThresholdAlerter;
 use Classes\Dto\Location;
-use Classes\Formatter\RuFormatter;
+use Classes\Formatter\RuLocaleFormatter;
 use Classes\Harvester\YandexHarvester;
-use Classes\Retriever\CurlRetriever;
+use Classes\HttpClient\CurlHttpClient;
+use Classes\Richtext\MarkdownRichtext;
 use Classes\Sender\TelegramSender;
 
 spl_autoload_register(static function (string $class) {
@@ -13,18 +14,17 @@ spl_autoload_register(static function (string $class) {
 
 $config = require 'Config.php';
 
-(new TelegramSender(
-    new CurlRetriever(),
-    (new ThresholdAlerter(
-        (new YandexHarvester(
-            new CurlRetriever(),
-        ))->setLocation(new Location(
+(new ThresholdAlerter(
+    (new YandexHarvester(new CurlHttpClient()))
+        ->setLocation(new Location(
             $config->latitude,
             $config->longitude,
             $config->location,
-        ))
-    ))->setThreshold($config->threshold),
-    new RuFormatter(),
-))->setApiKey($config->tgApiKey)
-    ->setChatId($config->tgChatId)
-    ->send();
+        )),
+    new MarkdownRichtext(),
+    new RuLocaleFormatter(),
+    (new TelegramSender(new CurlHttpClient()))
+        ->setApiKey($config->tgApiKey)
+        ->setChatId($config->tgChatId),
+))->setThreshold($config->threshold)
+    ->alert();

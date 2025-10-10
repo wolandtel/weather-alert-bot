@@ -1,11 +1,10 @@
 <?php
 
-namespace Interfaces;
+declare(strict_types=1);
 
-use Classes\Dto\Message;
+namespace Interfaces;
 
 interface Alerter
 {
-    /** @return Message[] */
-    public function getMessages(): array;
+    public function alert(): self;
 }

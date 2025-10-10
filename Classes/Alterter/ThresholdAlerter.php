@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace Classes\Alterter;
 
-use Classes\Dto\Message;
 use Interfaces\Alerter;
 use Interfaces\Harvester;
+use Interfaces\LocaleFormatter;
+use Interfaces\Richtext;
+use Interfaces\Sender;
 
 final class ThresholdAlerter implements Alerter
 {
     private float $threshold = 1;
 
-    public function __construct(private readonly Harvester $harvester)
-    {
+    public function __construct(
+        private readonly Harvester $harvester,
+        private readonly Richtext $richtext,
+        private readonly LocaleFormatter $localeFormatter,
+        private readonly Sender $sender,
+    ) {
     }
 
     public function setThreshold(float $threshold): self
@@ -22,19 +28,31 @@ final class ThresholdAlerter implements Alerter
         return $this;
     }
 
-    /** @return Message[] */
-    public function getMessages(): array
+    public function alert(): self
+    {
+        $message = $this->getMessage();
+        if (!empty($message)) {
+            $this->sender->send($message, $this->richtext->getMode());
+        }
+
+        return $this;
+    }
+
+    private function getMessage(): string
     {
         $messages = [];
         foreach ($this->harvester->getTemperatureData() as $day) {
             if ($day->getTemperature() < $this->threshold) {
-                $messages[] = new Message(
-                    'Минимальная температура воздуха на [%s](%s): %s°C.',
-                    $day,
+                $messages[] = sprintf(
+                    'Минимальная температура воздуха на %s: %s°C.',
+                    !empty($day->getLink())
+                        ? $this->richtext->getLink($day->getDate(), $day->getLink())
+                        : $day->getDate(),
+                    $this->localeFormatter->number($day->getTemperature()),
                 );
             }
         }
 
-        return $messages;
+        return implode($this->richtext->getLineFeed(), $messages);
     }
 }

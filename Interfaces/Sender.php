@@ -6,5 +6,5 @@ namespace Interfaces;
 
 interface Sender
 {
-    public function send(): void;
+    public function send(string $message, string $messageFormat = ''): void;
 }
