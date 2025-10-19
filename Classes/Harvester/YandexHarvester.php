@@ -104,10 +104,11 @@ final class YandexHarvester implements Harvester
                         ->setLink(self::BASE_URL . $node->getAttribute('href'));
                 }
             } elseif ($index % 3 === 2) {
+                // Блядский яндекс юзает юникодный минус: − = 0xE2 0x88 0x92 = U+2212
                 $day->setTemperature((float)preg_replace(
                     '/[^0-9.-]/',
                     '',
-                    $node->textContent
+                    strtr($node->textContent, ['−' => '-'])
                 ));
             }
         }
