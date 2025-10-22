@@ -17,7 +17,7 @@ try {
 
 try {
     $containerBuilder = new ContainerBuilder();
-    if (getenv('APP_ENV') === 'prod') {
+    if ($_ENV['APP_ENV'] === 'prod') {
         $containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
         $containerBuilder->writeProxiesToFile(true, __DIR__ . '/../var/cache/proxies');
     }
