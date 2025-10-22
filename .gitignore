@@ -1,1 +1,6 @@
-Config.php
+# .gitignore
+
+/vendor
+/var/cache/*
+!.gitignore
+.env
