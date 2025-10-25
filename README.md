@@ -2,7 +2,7 @@
 **The telegram bot to alert you about low environment temperature**.
 For example, you may be alerted if you have to change your tires.
 
-## What weather sources do it use?
+## What weather sources does it use?
 For now there are two sources: Yandex Weather (by parsing their website) and OpenMeteo (by API).
 If you're living in Russia, Yendex weather is your best choise.
 
