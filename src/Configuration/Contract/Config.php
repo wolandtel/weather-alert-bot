@@ -12,6 +12,7 @@ interface Config
     public function isProd(): bool;
     public function getLocation(): Location;
     public function getThresholdMin(): float;
+    public function getThresholdDailyAverage(): float;
     public function getTgApiKey(): string;
     public function getTgChatId(): int;
 }

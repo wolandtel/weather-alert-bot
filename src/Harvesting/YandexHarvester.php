@@ -100,16 +100,23 @@ final class YandexHarvester implements Harvester
                         ->setDayOfWeek($dayOfWeek)
                         ->setLink(self::BASE_URL . $node->getAttribute('href'));
                 }
+            } elseif ($index % 3 === 1) {
+                $day->getTemperature()->setMax($this->getTemperature($node->textContent));
             } elseif ($index % 3 === 2) {
-                // Блядский яндекс юзает юникодный минус: − = 0xE2 0x88 0x92 = U+2212
-                $day->setTemperature((float)preg_replace(
-                    '/[^0-9.-]/',
-                    '',
-                    strtr($node->textContent, ['−' => '-'])
-                ));
+                $day->getTemperature()->setMin($this->getTemperature($node->textContent));
             }
         }
 
         return $days;
+    }
+
+    private function getTemperature(string $temperatureString): float
+    {
+        // Блядский яндекс юзает юникодный минус: − = 0xE2 0x88 0x92 = U+2212
+        return (float)preg_replace(
+            '/[^0-9.-]/',
+            '',
+            strtr($temperatureString, ['−' => '-'])
+        );
     }
 }

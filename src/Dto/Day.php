@@ -8,12 +8,19 @@ use DateTimeImmutable;
 
 final class Day
 {
+    private Temperature $temperature;
+
     public function __construct(
         private ?DateTimeImmutable $date = null,
-        private ?float $temperature = null,
+        ?Temperature $temperature = null,
         private string $link  = '',
         private string $dayOfWeek = '',
     ) {
+        if ($temperature === null) {
+            $this->temperature = new Temperature();
+        } else {
+            $this->temperature = $temperature;
+        }
     }
 
     public function setDate(DateTimeImmutable $date): self
@@ -27,13 +34,7 @@ final class Day
         return $this->date;
     }
 
-    public function setTemperature(float $temperature): self
-    {
-        $this->temperature = $temperature;
-        return $this;
-    }
-
-    public function getTemperature(): float
+    public function getTemperature(): Temperature
     {
         return $this->temperature;
     }

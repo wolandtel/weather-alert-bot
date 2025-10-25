@@ -43,6 +43,11 @@ final class EnvConfig implements Config
         return (float)$_ENV['THRESHOLD_MIN'];
     }
 
+    public function getThresholdDailyAverage(): float
+    {
+        return (float)$_ENV['THRESHOLD_DAILY_AVERAGE'];
+    }
+
     public function getTgApiKey(): string
     {
         return (string)$_ENV['TG_API_KEY'];

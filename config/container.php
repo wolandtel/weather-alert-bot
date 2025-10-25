@@ -14,6 +14,8 @@ use App\Harvesting\Contract\Harvester;
 use App\Harvesting\YandexHarvester;
 use App\Http\Contract\HttpClient;
 use App\Http\CurlHttpClient;
+use App\Logging\Contract\Logger;
+use App\Logging\StdErrLogger;
 use App\Notification\Contract\Sender;
 use App\Notification\TelegramSender;
 
@@ -27,4 +29,5 @@ return [
     HttpClient::class => autowire(CurlHttpClient::class),
     LocaleFormatter::class => autowire(RuLocaleFormatter::class),
     Richtext::class => autowire(MarkdownRichtext::class),
+    Logger::class => autowire(StdErrLogger::class),
 ];
