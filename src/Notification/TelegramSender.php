@@ -17,23 +17,11 @@ final class TelegramSender implements Sender
     private int $chatId;
 
     public function __construct(
+        Config $config,
         private readonly HttpClient $httpClient,
-        private readonly Config $config,
     ) {
-        $this->apiKey = $this->config->getTgApiKey();
-        $this->chatId = $this->config->getTgChatId();
-    }
-
-    public function setChatId(int $chatId): self
-    {
-        $this->chatId = $chatId;
-        return $this;
-    }
-
-    public function setApiKey(string $apiKey): self
-    {
-        $this->apiKey = $apiKey;
-        return $this;
+        $this->apiKey = $config->getTgApiKey();
+        $this->chatId = $config->getTgChatId();
     }
 
     /** @throws JsonException */

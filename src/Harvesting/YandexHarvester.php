@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Harvesting;
 
+use App\Configuration\Contract\Config;
 use App\Dto\Day;
 use App\Dto\Location;
 use App\Harvesting\Contract\Harvester;
@@ -22,17 +23,14 @@ final class YandexHarvester implements Harvester
     private const string URL = self::BASE_URL . '/pogoda/ru/%s?lat=%s&lon=%s';
     private const string DAYS_XPATH
         = "//div[contains(@class, 'AppShortForecastDay_container__r4hyT')]"
-            . "//*[self::a or self::span[contains(@class, 'AppShortForecastDay_temperature__DV3oM')]]";
-    private ?Location $location = null;
+        . "//*[self::a or self::span[contains(@class, 'AppShortForecastDay_temperature__DV3oM')]]";
+    private Location $location;
 
-    public function __construct(private readonly HttpClient $httpClient)
-    {
-    }
-
-    public function setLocation(Location $location): self
-    {
-        $this->location = $location;
-        return $this;
+    public function __construct(
+        Config $config,
+        private readonly HttpClient $httpClient,
+    ) {
+        $this->location = $config->getLocation();
     }
 
     /**
@@ -77,8 +75,7 @@ final class YandexHarvester implements Harvester
         $days = [];
         $day = null;
         $firstDayOfMonth = null;
-        foreach ($nodes as $index => $node)
-        {
+        foreach ($nodes as $index => $node) {
             if ($index % 3 === 0) {
                 if ($day !== null) {
                     $days[] = $day;
@@ -116,4 +113,3 @@ final class YandexHarvester implements Harvester
         return $days;
     }
 }
-

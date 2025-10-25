@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Alerting\Contract\Alerter;
 use App\Alerting\MinTemperatureAlerter;
 use App\Configuration\Contract\Config;
@@ -14,6 +16,7 @@ use App\Http\Contract\HttpClient;
 use App\Http\CurlHttpClient;
 use App\Notification\Contract\Sender;
 use App\Notification\TelegramSender;
+
 use function DI\autowire;
 
 return [

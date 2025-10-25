@@ -11,7 +11,7 @@ interface Config
     public function isDev(): bool;
     public function isProd(): bool;
     public function getLocation(): Location;
-    public function getThreshold(): float;
+    public function getThresholdMin(): float;
     public function getTgApiKey(): string;
     public function getTgChatId(): int;
 }

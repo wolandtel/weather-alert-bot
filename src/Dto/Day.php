@@ -31,7 +31,6 @@ final class Day
     {
         $this->temperature = $temperature;
         return $this;
-        
     }
 
     public function getTemperature(): float

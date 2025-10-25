@@ -4,6 +4,7 @@
 declare(strict_types=1);
 
 use App\Alerting\Contract\Alerter;
+use App\Alerting\MinTemperatureAlerter;
 use App\Configuration\Contract\Config;
 use DI\Container;
 
@@ -14,11 +15,8 @@ try {
     /** @var Config $config */
     $config = $container->get(Config::class);
     /** @var Alerter $alerter */
-    $alerter = $container->get(Alerter::class);
-    
-    $alerter->setLocation($config->getLocation())
-        ->setThreshold($config->getThreshold())
-        ->alert();
+    $alerter = $container->get(MinTemperatureAlerter::class);
+    $alerter->alert();
 } catch (Throwable $e) {
     fwrite(STDERR, '[' . date('Y-m-d H:i:s') . '] Произошла ошибка: ' . $e->getMessage() . PHP_EOL);
     fwrite(STDERR, 'Trace: ' . $e->getTraceAsString() . PHP_EOL);

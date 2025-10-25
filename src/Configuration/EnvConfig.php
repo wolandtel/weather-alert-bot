@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Configuration;
+
 use App\Configuration\Contract\Config;
 use App\Dto\Location;
 
@@ -34,10 +35,10 @@ final class EnvConfig implements Config
             (string)$_ENV['TIMEZONE'],
             (string)$_ENV['ACCUWEATHER_LOCATION_ID'],
         );
-        
+
     }
 
-    public function getThreshold(): float
+    public function getThresholdMin(): float
     {
         return (float)$_ENV['THRESHOLD_MIN'];
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Harvesting;
 
+use App\Configuration\Contract\Config;
 use App\Dto\Day;
 use App\Dto\Location;
 use App\Harvesting\Contract\Harvester;
@@ -19,16 +20,13 @@ final class OpenMeteoHarvester implements Harvester
         . '&daily=temperature_2m_max,temperature_2m_min';
     private const string ACCUWEATHER_LINK = 'http://www.accuweather.com/ru/ru/'
         . '%s/%s/daily-weather-forecast/%s?unit=c&day=%d';
-    private ?Location $location = null;
+    private Location $location;
 
-    public function __construct(private readonly HttpClient $httpClient)
-    {
-    }
-
-    public function setLocation(Location $location): self
-    {
-        $this->location = $location;
-        return $this;
+    public function __construct(
+        Config $config,
+        private readonly HttpClient $httpClient,
+    ) {
+        $this->location = $config->getLocation();
     }
 
     /**
@@ -68,4 +66,3 @@ final class OpenMeteoHarvester implements Harvester
         return $days;
     }
 }
-
