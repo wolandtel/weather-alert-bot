@@ -29,7 +29,7 @@ return (new PhpCsFixer\Config())
         'trim_array_spaces' => true,    // Убирает пробелы в начале и конце массивов.
 
         // Импорты (use)
-        'ordered_imports' => ['sort_algorithm' => 'alpha'], // Сортировать `use` по алфавиту.
+        'ordered_imports' => ['sort_algorithm' => 'alpha', 'imports_order' => ['const', 'class', 'function']], // Сортировать `use` по алфавиту.
         'no_unused_imports' => true,                       // Автоматически удалять неиспользуемые `use`.
         'single_line_after_imports' => true,               // Одна пустая строка после блока `use`.
 
