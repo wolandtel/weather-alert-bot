@@ -3,7 +3,7 @@
     "description": "Environment temperature alerter.",
     "type": "project",
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.3",
         "php-di/php-di": "^7.0",
         "vlucas/phpdotenv": "^5.6"
     },
