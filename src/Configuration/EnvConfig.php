@@ -4,15 +4,25 @@ declare(strict_types=1);
 
 namespace App\Configuration;
 
+use App\Alerting\DailyAverageTemperatureAlerter;
+use App\Alerting\MinTemperatureAlerter;
 use App\Configuration\Contract\Config;
 use App\Dto\Location;
+use App\Logging\Contract\Logger;
 
 final class EnvConfig implements Config
 {
+    private const array THRESHOLDS = [
+        MinTemperatureAlerter::class => 'THRESHOLD_MIN',
+        DailyAverageTemperatureAlerter::class => 'THRESHOLD_DAILY_AVERAGE',
+    ];
+
+    private Logger $logger;
     private string $environment;
 
-    public function __construct()
+    public function __construct(Logger $logger)
     {
+        $this->logger = $logger;
         $this->environment = $_ENV['APP_ENV'] ?: 'dev';
     }
 
@@ -35,17 +45,17 @@ final class EnvConfig implements Config
             (string)$_ENV['TIMEZONE'],
             (string)$_ENV['ACCUWEATHER_LOCATION_ID'],
         );
-
     }
 
-    public function getThresholdMin(): float
+    public function getThreshold(string $alerterClass): float
     {
-        return (float)$_ENV['THRESHOLD_MIN'];
-    }
-
-    public function getThresholdDailyAverage(): float
-    {
-        return (float)$_ENV['THRESHOLD_DAILY_AVERAGE'];
+        if (!isset(self::THRESHOLDS[$alerterClass])) {
+            $this->logger->error("Threshold name for alerter [$alerterClass] is not set.");
+        }
+        if (!isset($_ENV[self::THRESHOLDS[$alerterClass]])) {
+            $this->logger->error("Threshold value for alerter [$alerterClass] is not set.");
+        }
+        return (float)$_ENV[self::THRESHOLDS[$alerterClass]];
     }
 
     public function getTgApiKey(): string

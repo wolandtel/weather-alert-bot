@@ -23,7 +23,7 @@ abstract class BaseAlerter implements Alerter
         protected readonly LocaleFormatter $localeFormatter,
         private readonly Sender $sender,
     ) {
-        $this->threshold = $config->getThresholdMin();
+        $this->threshold = $config->getThreshold(static::class);
     }
 
     abstract protected function getMessage(): string;
