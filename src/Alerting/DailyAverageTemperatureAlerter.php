@@ -8,6 +8,11 @@ use App\Dto\Day;
 
 final class DailyAverageTemperatureAlerter extends BaseAlerter
 {
+    protected function getTitle(): string
+    {
+        return 'Среднесуточная температура воздуха';
+    }
+
     protected function getMessage(): string
     {
         $messages = [];
@@ -16,7 +21,7 @@ final class DailyAverageTemperatureAlerter extends BaseAlerter
             if ($averageTemperature < $this->threshold) {
                 $date = $this->getDateFormatted($day);
                 $messages[] = sprintf(
-                    'Среднесуточная температура воздуха на %s: %s°C.',
+                    '%s: %s°C.',
                     !empty($day->getLink())
                         ? $this->richtext->getLink($date, $day->getLink())
                         : $date,

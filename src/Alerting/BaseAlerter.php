@@ -26,6 +26,7 @@ abstract class BaseAlerter implements Alerter
         $this->threshold = $config->getThreshold(static::class);
     }
 
+    abstract protected function getTitle(): string;
     abstract protected function getMessage(): string;
 
     protected function getDateFormatted(Day $day): string
@@ -42,6 +43,7 @@ abstract class BaseAlerter implements Alerter
     {
         $message = $this->getMessage();
         if (!empty($message)) {
+            $message = "{$this->getTitle()}:\n$message";
             $this->sender->send($message, $this->richtext->getMode());
         }
 

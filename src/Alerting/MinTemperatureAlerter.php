@@ -6,6 +6,11 @@ namespace App\Alerting;
 
 final class MinTemperatureAlerter extends BaseAlerter
 {
+    protected function getTitle(): string
+    {
+        return 'Минимальная температура воздуха';
+    }
+
     protected function getMessage(): string
     {
         $messages = [];
@@ -13,7 +18,7 @@ final class MinTemperatureAlerter extends BaseAlerter
             if ($day->getTemperature()->getMin() < $this->threshold) {
                 $date = $this->getDateFormatted($day);
                 $messages[] = sprintf(
-                    'Минимальная температура воздуха на %s: %s°C.',
+                    '%s: %s°C.',
                     !empty($day->getLink())
                         ? $this->richtext->getLink($date, $day->getLink())
                         : $date,
