@@ -1,11 +1,11 @@
-## What's it?
-**The telegram bot to alert you about low environment temperature**.
-For example, you may be alerted if you have to change your tires.
+## What is it?
+**A Telegram bot that alerts you when the temperature drops too low**.  
+For example, it can notify you when it’s time to change your tires.
 
 ## What weather sources does it use?
-For now there are two sources: Yandex Weather (by parsing their website) and OpenMeteo (by API).
-If you're living in Russia, Yendex weather is your best choise.
+Currently, there are two sources: **Yandex Weather** (parsed from their website) and **Open-Meteo** (via API).  
+If you live in Russia, Yandex Weather is usually the best choice.
 
 ## How to add other sources?
-Just implement another harvester and put it into the `config/container` for ther Harverster interface.
-Also you may just add another binary following the example of `alertOpenMeteo.php`
+Just implement another harvester and register it in `config/container.php` for the **Harvester** interface.  
+Alternatively, you can add another binary following the example of `alertOpenMeteo.php`.
