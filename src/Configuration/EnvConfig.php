@@ -4,18 +4,11 @@ declare(strict_types=1);
 
 namespace App\Configuration;
 
-use App\Alerting\DailyAverageTemperatureAlerter;
-use App\Alerting\MinTemperatureAlerter;
 use App\Configuration\Contract\Config;
 use App\Dto\Location;
 
 final class EnvConfig implements Config
 {
-    private const array THRESHOLDS = [
-        MinTemperatureAlerter::class => 'THRESHOLD_MIN',
-        DailyAverageTemperatureAlerter::class => 'THRESHOLD_DAILY_AVERAGE',
-    ];
-
     private string $environment;
 
     public function __construct()
@@ -46,12 +39,12 @@ final class EnvConfig implements Config
 
     public function getThresholdMin(): float
     {
-        return (float)$_ENV[self::THRESHOLDS['THRESHOLD_MIN']];
+        return (float)$_ENV['THRESHOLD_MIN'];
     }
 
     public function getThresholdDailyAverage(): float
     {
-        return (float)$_ENV[self::THRESHOLDS['THRESHOLD_DAILY_AVERAGE']];
+        return (float)$_ENV['THRESHOLD_DAILY_AVERAGE'];
     }
 
     public function getTgApiKey(): string
