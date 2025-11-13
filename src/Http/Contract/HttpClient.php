@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Contract;
 
-use App\Http\Exceptions\HttpException;
+use App\Http\Exception\HttpException;
 
 interface HttpClient
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Exceptions;
+namespace App\Http\Exception;
 
 use RuntimeException;
 use Throwable;

@@ -9,7 +9,7 @@ use App\Dto\Day;
 use App\Dto\Temperature;
 use App\Harvesting\Exception\EmptyReponseException;
 use App\Http\Contract\HttpClient;
-use App\Http\Exceptions\HttpException;
+use App\Http\Exception\HttpException;
 use App\Logging\Contract\Logger;
 use DateMalformedStringException;
 use DateTimeImmutable;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http;
 
 use App\Http\Contract\HttpClient;
-use App\Http\Exceptions\HttpException;
+use App\Http\Exception\HttpException;
 
 final class CurlHttpClient implements HttpClient
 {

@@ -9,7 +9,7 @@ use App\Dto\Day;
 use App\Dto\Location;
 use App\Harvesting\Contract\Harvester;
 use App\Harvesting\Exception\EmptyReponseException;
-use App\Http\Exceptions\HttpException;
+use App\Http\Exception\HttpException;
 use App\Logging\Contract\Logger;
 use RuntimeException;
 

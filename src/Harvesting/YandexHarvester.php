@@ -8,7 +8,7 @@ use App\Configuration\Contract\Config;
 use App\Dto\Day;
 use App\Harvesting\Exception\EmptyReponseException;
 use App\Http\Contract\HttpClient;
-use App\Http\Exceptions\HttpException;
+use App\Http\Exception\HttpException;
 use App\Logging\Contract\Logger;
 use DateInterval;
 use DateMalformedStringException;
