@@ -6,10 +6,9 @@ namespace App\Harvesting;
 
 use App\Configuration\Contract\Config;
 use App\Dto\Day;
-use App\Dto\Location;
-use App\Harvesting\Contract\Harvester;
 use App\Harvesting\Exception\EmptyReponseException;
 use App\Http\Contract\HttpClient;
+use App\Http\Exceptions\HttpException;
 use App\Logging\Contract\Logger;
 use DateInterval;
 use DateMalformedStringException;
@@ -17,9 +16,8 @@ use DateTimeImmutable;
 use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
-use RuntimeException;
 
-final class YandexHarvester implements Harvester
+final class YandexHarvester extends AbstractHarvester
 {
     private const string BASE_URL = 'https://yandex.ru';
     private const string URL = self::BASE_URL . '/pogoda/ru/%s?lat=%s&lon=%s';
@@ -27,41 +25,43 @@ final class YandexHarvester implements Harvester
         = "//div[contains(@class, 'AppShortForecastDay_container__r4hyT')]"
         . "//*[self::a or self::span[contains(@class, 'AppShortForecastDay_temperature__DV3oM')]]";
 
-    private Location $location;
-
     public function __construct(
         Config $config,
+        Logger $logger,
         private readonly HttpClient $httpClient,
-        private readonly Logger $logger,
     ) {
-        $this->location = $config->getLocation();
+        parent::__construct($config, $logger);
     }
 
-    /** @return Day[] */
-    public function getTemperatureData(): array
+    /**
+     * @return Day[]
+     *
+     * @throws HttpException
+     * @throws EmptyReponseException
+     */
+    protected function harvestTemperatureData(): array
     {
         return $this->parseHtmlPage($this->getHtmlPage());
     }
 
+    /**
+     * @throws HttpException
+     * @throws EmptyReponseException
+     */
     private function getHtmlPage(): string
     {
-        try {
-            $response = $this->httpClient->get(sprintf(
-                self::URL,
-                $this->location->getName(),
-                $this->location->getLatitude(),
-                $this->location->getLongitude(),
-            ));
+        $response = $this->httpClient->get(sprintf(
+            self::URL,
+            $this->location->getName(),
+            $this->location->getLatitude(),
+            $this->location->getLongitude(),
+        ));
 
-            if (empty($response)) {
-                throw new EmptyReponseException();
-            }
-
-            return $response;
-        } catch (RuntimeException $e) {
-            $this->logger->exception($e);
-            return '';
+        if (empty($response)) {
+            throw new EmptyReponseException();
         }
+
+        return $response;
     }
 
     /** @return Day[] */
