@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace App\Alerting;
 
+use App\Configuration\Contract\Config;
 use App\Dto\Day;
 
 final class DailyAverageTemperatureAlerter extends BaseAlerter
 {
+    protected function setThreshold(Config $config): void
+    {
+        $this->threshold = $config->getThresholdDailyAverage();
+    }
+
     protected function getTitle(): string
     {
         return 'Среднесуточная температура воздуха';

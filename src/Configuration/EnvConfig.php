@@ -8,7 +8,6 @@ use App\Alerting\DailyAverageTemperatureAlerter;
 use App\Alerting\MinTemperatureAlerter;
 use App\Configuration\Contract\Config;
 use App\Dto\Location;
-use App\Logging\Contract\Logger;
 
 final class EnvConfig implements Config
 {
@@ -17,12 +16,10 @@ final class EnvConfig implements Config
         DailyAverageTemperatureAlerter::class => 'THRESHOLD_DAILY_AVERAGE',
     ];
 
-    private Logger $logger;
     private string $environment;
 
-    public function __construct(Logger $logger)
+    public function __construct()
     {
-        $this->logger = $logger;
         $this->environment = $_ENV['APP_ENV'] ?: 'dev';
     }
 
@@ -47,15 +44,14 @@ final class EnvConfig implements Config
         );
     }
 
-    public function getThreshold(string $alerterClass): float
+    public function getThresholdMin(): float
     {
-        if (!isset(self::THRESHOLDS[$alerterClass])) {
-            $this->logger->error("Threshold name for alerter [$alerterClass] is not set.");
-        }
-        if (!isset($_ENV[self::THRESHOLDS[$alerterClass]])) {
-            $this->logger->error("Threshold value for alerter [$alerterClass] is not set.");
-        }
-        return (float)$_ENV[self::THRESHOLDS[$alerterClass]];
+        return (float)$_ENV[self::THRESHOLDS['THRESHOLD_MIN']];
+    }
+
+    public function getThresholdDailyAverage(): float
+    {
+        return (float)$_ENV[self::THRESHOLDS['THRESHOLD_DAILY_AVERAGE']];
     }
 
     public function getTgApiKey(): string

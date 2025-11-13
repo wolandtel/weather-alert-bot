@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace App\Alerting;
 
+use App\Configuration\Contract\Config;
+
 final class MinTemperatureAlerter extends BaseAlerter
 {
+    protected function setThreshold(Config $config): void
+    {
+        $this->threshold = $config->getThresholdMin();
+    }
+
     protected function getTitle(): string
     {
         return 'Минимальная температура воздуха';

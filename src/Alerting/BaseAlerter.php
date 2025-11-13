@@ -23,11 +23,12 @@ abstract class BaseAlerter implements Alerter
         protected readonly LocaleFormatter $localeFormatter,
         private readonly Sender $sender,
     ) {
-        $this->threshold = $config->getThreshold(static::class);
+        $this->setThreshold($config);
     }
 
     abstract protected function getTitle(): string;
     abstract protected function getMessage(): string;
+    abstract protected function setThreshold(Config $config): void;
 
     protected function getDateFormatted(Day $day): string
     {
