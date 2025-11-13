@@ -9,11 +9,13 @@ use App\Dto\Day;
 use App\Dto\Location;
 use App\Dto\Temperature;
 use App\Harvesting\Contract\Harvester;
+use App\Harvesting\Exception\EmptyReponseException;
 use App\Http\Contract\HttpClient;
 use App\Logging\Contract\Logger;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use JsonException;
+use RuntimeException;
 
 final class OpenMeteoHarvester implements Harvester
 {
@@ -44,6 +46,11 @@ final class OpenMeteoHarvester implements Harvester
                 $this->location->getLongitude(),
                 urlencode($this->location->getTimezone()),
             ));
+
+            if (empty($response)) {
+                throw new EmptyReponseException();
+            }
+
             $rawData = json_decode(
                 $response,
                 false,
@@ -51,7 +58,11 @@ final class OpenMeteoHarvester implements Harvester
                 JSON_THROW_ON_ERROR
             );
         } catch (JsonException $e) {
-            $this->logger->error("Got string: '$response'");
+            $this->logger->error("Got string: '$response' [URL: {$this->httpClient->getLastEffectiveUrl()}]");
+            $this->logger->exception($e);
+
+            return [];
+        } catch (RuntimeException $e) {
             $this->logger->exception($e);
 
             return [];

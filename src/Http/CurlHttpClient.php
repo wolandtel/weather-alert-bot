@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http;
 
 use App\Http\Contract\HttpClient;
+use App\Http\Exceptions\HttpException;
 
 final class CurlHttpClient implements HttpClient
 {
@@ -19,6 +20,7 @@ final class CurlHttpClient implements HttpClient
     ];
 
     private array $options = self::DEFAULT_OPTIONS;
+    private string $lastEffectiveUrl = '';
 
     public function setHeaders(array $headers): self
     {
@@ -26,11 +28,13 @@ final class CurlHttpClient implements HttpClient
         return $this;
     }
 
+    /** @throws HttpException */
     public function get(string $url): string
     {
         return $this->request($url);
     }
 
+    /** @throws HttpException */
     public function post(string $url, string $data): string
     {
         $this->options[CURLOPT_POST] = true;
@@ -39,13 +43,32 @@ final class CurlHttpClient implements HttpClient
         return $this->request($url);
     }
 
+    /** @throws HttpException */
     private function request(string $url): string
     {
         $ch = curl_init($url);
         curl_setopt_array($ch, $this->options);
         $html = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        $this->lastEffectiveUrl = $info['url'];
+        if (empty($html)) {
+            $responseCode = $info['http_code'];
+            if ($responseCode !== 200) {
+                throw new HttpException(
+                    $responseCode,
+                    $this->lastEffectiveUrl,
+                    curl_error($ch),
+                    curl_errno($ch),
+                );
+            }
+        }
         curl_close($ch);
 
-        return $html;
+        return (string)$html;
+    }
+
+    public function getLastEffectiveUrl(): string
+    {
+        return $this->lastEffectiveUrl;
     }
 }

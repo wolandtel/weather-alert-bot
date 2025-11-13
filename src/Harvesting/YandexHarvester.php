@@ -8,6 +8,7 @@ use App\Configuration\Contract\Config;
 use App\Dto\Day;
 use App\Dto\Location;
 use App\Harvesting\Contract\Harvester;
+use App\Harvesting\Exception\EmptyReponseException;
 use App\Http\Contract\HttpClient;
 use App\Logging\Contract\Logger;
 use DateInterval;
@@ -16,6 +17,7 @@ use DateTimeImmutable;
 use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
+use RuntimeException;
 
 final class YandexHarvester implements Harvester
 {
@@ -43,12 +45,23 @@ final class YandexHarvester implements Harvester
 
     private function getHtmlPage(): string
     {
-        return $this->httpClient->get(sprintf(
-            self::URL,
-            $this->location->getName(),
-            $this->location->getLatitude(),
-            $this->location->getLongitude(),
-        ));
+        try {
+            $response = $this->httpClient->get(sprintf(
+                self::URL,
+                $this->location->getName(),
+                $this->location->getLatitude(),
+                $this->location->getLongitude(),
+            ));
+
+            if (empty($response)) {
+                throw new EmptyReponseException();
+            }
+
+            return $response;
+        } catch (RuntimeException $e) {
+            $this->logger->exception($e);
+            return '';
+        }
     }
 
     /** @return Day[] */
