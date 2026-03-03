@@ -12,13 +12,23 @@ final class Temperature
 
     public function setMax(float $max): self
     {
-        $this->max = $max;
+        if ($this->min > $max) {
+            $this->max = $this->min;
+            $this->min = $max;
+        } else {
+          $this->max = $max;
+        }
         return $this;
     }
 
     public function setMin(float $min): self
     {
-        $this->min = $min;
+        if ($this->max !== null && $this->max < $min) {
+            $this->min = $this->max;
+            $this->max = $min;
+        } else {
+          $this->min = $min;
+        }
         return $this;
     }
 
