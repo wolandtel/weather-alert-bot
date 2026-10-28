@@ -21,9 +21,8 @@ final class YandexHarvester extends AbstractHarvester
 {
     private const string BASE_URL = 'https://yandex.ru';
     private const string URL = self::BASE_URL . '/pogoda/ru/%s?lat=%s&lon=%s';
-    private const string DAYS_XPATH
-        = "//div[@id='S:7']/"
-        . "/div[contains(@class, 'AppShortForecastDay_container__r4hyT')]"
+    private const string DAYS_XPATH =
+        "//div[contains(@class, 'AppShortForecastDay_container__r4hyT')]"
         . "//*[self::a or self::span[contains(@class, 'AppShortForecastDay_temperature__DV3oM')]]";
 
     public function __construct(
@@ -90,9 +89,6 @@ final class YandexHarvester extends AbstractHarvester
         foreach ($nodes as $index => $node) {
             switch ($index % 3) {
                 case 0:
-                    if ($day !== null) {
-                        $days[] = $day;
-                    }
                     $day = new Day();
                     if ($node->nodeName === 'a') {
                         $dayOfForecast = strtr(
@@ -124,6 +120,9 @@ final class YandexHarvester extends AbstractHarvester
                     break;
                 case 2:
                     $day->getTemperature()->setMin($this->getTemperature($node->textContent));
+                    /* После заполнения данных дня добавляем его в массив. Т.к. парсинг веб-страницы может выдавать дубликаты,
+                     * индексируем массив датой */
+                    $days[$day->getDate()->getTimestamp()] = $day;
                     break;
             }
         }
